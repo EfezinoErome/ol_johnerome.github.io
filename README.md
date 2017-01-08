@@ -9,6 +9,6 @@ This will be the main portfolio page for ol_johnerome. I am currently located in
 
 ## More Description
 
-This is addded locally 
+This is added locally 
 
 Some more changes.
