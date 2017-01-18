@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(maps)
 
 armed_func = function() {
   
@@ -23,6 +24,8 @@ armed_sum = mutate(armed_sum, percentage = ifelse(year == 2015, (total/total_201
                                                   (total/total_2016)*100 ))
 classification_sum =  mutate(classification_sum, percentage = ifelse(year == 2015, (total/total_2015)*100, 
                                                             (total/total_2016)*100 ))
+by_state = summarise(group_by(police_vio_total, full.char), total = 
+                       sum(n()))
 gg1 = ggplot(race_sum, aes(x = raceethnicity, y = total)) + geom_bar(aes(fill = as.factor(year)),
                                                                                   stat = 'identity', position =
                                                                                     'dodge')
