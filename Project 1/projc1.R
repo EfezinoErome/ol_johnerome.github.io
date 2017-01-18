@@ -32,3 +32,8 @@ gg2 = ggplot(armed_sum, aes(x = armed, y = total)) + geom_bar(aes(fill = as.fact
 gg3 = ggplot(classification_sum, aes(x = classification, y = total)) + geom_bar(aes(fill = as.factor(year)),
                                                               stat = 'identity', position =
                                                                 'dodge')
+gg4 = ggplot(filter(police_vio_total, year == 2015), aes(x = reorder(raceethnicity,age.numeric,median), 
+                                   y = age.numeric, fill = raceethnicity )) + geom_boxplot()
+
+gg5 = ggplot(filter(police_vio_total, year == 2016), aes(x = reorder(raceethnicity,age.numeric,median), 
+                                  y = age.numeric, fill = raceethnicity )) + geom_boxplot() 
