@@ -1,6 +1,7 @@
 library(dplyr)
 library(ggplot2)
 library(maps)
+library(ggthemes)
 counties = map_data('county')
 states = map_data('state')
 
@@ -31,19 +32,34 @@ by_state = summarise(group_by(police_vio_total, region), total =
                        sum(n()))
 by_state$region = tolower(by_state$region)
 by_state_merge = inner_join(states, by_state, by = 'region')
-gg1 = ggplot(race_sum, aes(x = raceethnicity, y = total)) + geom_bar(aes(fill = as.factor(year)),
+gg1 = ggplot(race_sum, aes(x = reorder(raceethnicity,total,median), y = total)) + geom_bar(aes(fill = as.factor(year)),
                                                                                   stat = 'identity', position =
                                                                                     'dodge')
-gg2 = ggplot(armed_sum, aes(x = armed, y = total)) + geom_bar(aes(fill = as.factor(year)),
+gg1 = gg1 + ggtitle('Police Violence in 2015 & 2016 - By Race') + xlab('Ethnicity') + ylab('Total killed') + 
+  theme(legend.position = "bottom") + scale_fill_discrete(name = "Year")
+gg2 = ggplot(armed_sum, aes(x = reorder(armed,total,median), y = total)) + geom_bar(aes(fill = as.factor(year)),
                                                                      stat = 'identity', position =
                                                                        'dodge')
-gg3 = ggplot(classification_sum, aes(x = classification, y = total)) + geom_bar(aes(fill = as.factor(year)),
+gg2 = gg2 + ggtitle("Police Violence in 2015 & 2016 - By Weapon") + xlab("Weapon of use") + ylab("Total Killed") + 
+  theme(legend.position = "bottom") + scale_fill_discrete(name = "Year")
+gg3 = ggplot(classification_sum, aes(x = reorder(classification,total, median), y = total)) + geom_bar(aes(fill = as.factor(year)),
                                                               stat = 'identity', position =
                                                                 'dodge')
+gg3 = gg3 + ggtitle("Police Violence in 2015 & 2016 - by Classification") + xlab("Classification") + ylab("Total Killed") + 
+  theme(legend.position = "bottom") + scale_fill_discrete(name = "Year")
 gg4 = ggplot(filter(police_vio_total, year == 2015), aes(x = reorder(raceethnicity,age.numeric,median), 
                                    y = age.numeric, fill = raceethnicity )) + geom_boxplot()
+gg4 = gg4 + ggtitle("Police Violence in 2015 - Grouped by Race") + xlab('Ethnicity') + ylab("Total Killed") + 
+  theme(legend.position = 'bottom') + scale_fill_discrete(name = 'Ethnicity')
 
-gg5 = ggplot(filter(police_vio_total, year == 2016), aes(x = reorder(raceethnicity,age.numeric,median), 
+gg5 = ggplot(filter(police_vio_total, year == 2016), aes(x = reorder(raceethnicity,age.numeric,FUN = mean), 
                                   y = age.numeric, fill = raceethnicity )) + geom_boxplot() 
+gg5 = gg5 + ggtitle("Police Violence in 2016 - Grouped by Race") + xlab('Ethnicity') + ylab("Total Killed") + 
+  theme(legend.position = 'bottom') + scale_fill_discrete(name = 'Ethnicity')
 
-gg6 = ggplot(by_state_merge) + geom_polygon(aes(x = long, y = lat, fill = total, group = group), color = "black") + scale_fill_gradient(low = 'green', high = 'red')
+gg6 = ggplot(by_state_merge) + geom_polygon(aes(x = long, y = lat, fill = total, group = group), color = "black") + 
+  scale_fill_gradient(low = 'yellow', high = 'red', name = "Total Killed")
+gg6 = gg6 + ggtitle("Police Violence in 2015 & 2016 - By State") + xlab('Longitude') + ylab("Latitude") + 
+  theme(legend.position = 'bottom') 
+temp = summarise(group_by(by_state_merge,region), long = mean(long), lat = mean(lat))
+gg6 + geom_text(data = tem, aes(x = long, y = lat, label = region), size = 5)
