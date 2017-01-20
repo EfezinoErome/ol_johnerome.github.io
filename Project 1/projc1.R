@@ -36,9 +36,9 @@ by_state_merge = inner_join(states, by_state, by = 'region')
 gg5 = ggplot(by_state_merge) + geom_polygon(aes(x = long, y = lat, fill = total, group = group), color = "black") + 
   scale_fill_gradient(low = 'yellow', high = 'red', name = "Total Killed")
 gg5 = gg5 + ggtitle("Police Violence in 2015 & 2016 - By State") + xlab('Longitude') + ylab("Latitude") + 
-  theme(legend.position = 'bottom') 
+  theme(legend.position = 'bottom') + theme_dark()
 temp = summarise(group_by(by_state_merge,region,state), long = mean(long), lat = mean(lat))
-gg5 + geom_text(data = temp, aes(x = long, y = lat, label = state), size = 5) + facet_grid(. ~ year)
+gg5 + geom_text(data = temp, aes(x = long, y = lat, label = state), size = 5) + facet_grid(. ~ year) 
 
 gg1 = ggplot(race_sum, aes(x = reorder(raceethnicity,total,median), y = total)) + geom_bar(aes(fill = as.factor(year)),
                                                                                            stat = 'identity', position =
@@ -81,8 +81,17 @@ gg4 = ggplot(data = data3) +
 gg4 = gg4 + ggtitle("Police Violence in 2015 - Grouped by Race") + xlab('Ethnicity') + ylab("Age") + 
   theme(legend.position = 'bottom') + scale_fill_discrete(name = 'Ethnicity')
 
+ggplot(data = summarise(group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black", "Hispanic/Latino"), gender == "Male"), raceethnicity, armed, classification, year), total = sum(n()) ) ) + 
+  geom_bar(aes(x = reorder(raceethnicity, total, mean), y = total, fill = raceethnicity), stat = 'identity') + 
+  facet_grid(armed ~ classification) + ggtitle('Police Violence in 2015 & 2016') + xlab('Ethnicity') + 
+  ylab('Total Killed') + theme(legend.position = "bottom") + scale_fill_discrete(name = "Ethnicity")
+
 #ggplot(data = filter(police_vio_total, raceethnicity %in% c("White","Black","Hispanic/Latino"), classification %in% c("Gunshot"))) + 
 #  geom_bar(aes(x = raceethnicity, fill = raceethnicity), position = 'dodge') + facet_grid(armed ~ classification)
-#ggplot(data = filter(police_vio_total, raceethnicity %in% c("White","Black","Hispanic/Latino"))) + 
- # geom_bar(aes(x = raceethnicity, fill = raceethnicity), position = 'dodge') + facet_grid(armed ~ classification)
-
+ggplot(data = filter(police_vio_total, raceethnicity %in% c("White","Black","Hispanic/Latino"))) + 
+  geom_bar(aes(x = raceethnicity, fill = raceethnicity), position = 'dodge') + facet_grid(armed ~ classification)
+#gplot(summarise(group_by(filter(police_vio_total, state %in% c("CA","TX","FL")), raceethnicity), total = sum(n()) ) ) + 
+#  geom_bar(aes(x = reorder(raceethnicity,total, mean), y = total, fill = raceethnicity), stat = 'identity') 
+ggplot(data = summarise(group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black", "Hispanic/Latino"), gender == "Male"), raceethnicity, armed, classification, year), total = sum(n()) ) ) +
+  geom_raster(aes(x = armed, y = classification, fill = total), interpolate = TRUE) + 
+  scale_fill_gradient(name = "Total Killed", low = 'yellow', high = 'red') + facet_grid(. ~ year)
