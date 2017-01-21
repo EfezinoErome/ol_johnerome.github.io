@@ -48,13 +48,13 @@ gg1 = gg1 + ggtitle('Police Violence in 2015 & 2016 - By Race') + xlab('Ethnicit
 
 ggplot(data = summarise(group_by(police_vio_total, raceethnicity, year), Year_total = sum(n())) ) + 
   geom_bar(aes(x = reorder(raceethnicity, Year_total), y = Year_total, fill = raceethnicity ), stat = 'identity') + 
-  facet_grid(. ~ year) + ggtitle('Police Violence - Grouped by year and Race') +
+  facet_grid(year ~ .) + ggtitle('Police Violence - Grouped by year and Race') +
   xlab('Ethnicity') + ylab('Total Killed') + theme(legend.position = 'bottom') + 
-  scale_fill_discrete(name = 'Ethnicity')
+  scale_fill_discrete(name = 'Ethnicity') + theme_dark()
 
 ggplot(data = summarise(group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black", "Hispanic/Latino"), gender != "Non-conforming"), raceethnicity, year, gender), total = sum(n()) ) )+ 
   geom_bar(aes(x = reorder(raceethnicity, total, mean), y = total, fill = raceethnicity), stat = 'identity', position = 'dodge') + 
-  facet_grid(gender ~ year) + 
+  facet_grid(gender ~ year) + theme_dark() +
   theme(legend.position = 'bottom') + ggtitle('Police Violence in 2015 & 2016 - Grouped by gender') + 
   xlab('Ethnicity') + ylab("Total Killed") + scale_fill_discrete(name = "Ethnicity")
 
@@ -62,7 +62,7 @@ data1 = group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black",
 data1 = summarise(data1, total = sum(n()))
 gg2 = ggplot(data = data1) +
   geom_bar(aes(x = reorder(armed, total, mean), y = total, fill = raceethnicity), stat = 'identity', position = 'dodge') + 
-  facet_grid(. ~ year)
+  facet_grid(year ~ .)
 gg2 = gg2 + ggtitle("Police Violence in 2015 & 2016 - By Weapon") + xlab("Weapon of use") + ylab("Total Killed") + 
   theme(legend.position = "bottom") + scale_fill_discrete(name = "Year")
 
@@ -84,7 +84,7 @@ gg4 = gg4 + ggtitle("Police Violence in 2015 - Grouped by Race") + xlab('Ethnici
 ggplot(data = summarise(group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black", "Hispanic/Latino"), gender == "Male"), raceethnicity, armed, classification, year), total = sum(n()) ) ) + 
   geom_bar(aes(x = reorder(raceethnicity, total, mean), y = total, fill = raceethnicity), stat = 'identity') + 
   facet_grid(armed ~ classification) + ggtitle('Police Violence in 2015 & 2016') + xlab('Ethnicity') + 
-  ylab('Total Killed') + theme(legend.position = "bottom") + scale_fill_discrete(name = "Ethnicity")
+  ylab('Total Killed') + theme(legend.position = "bottom") + scale_fill_discrete(name = "Ethnicity") + theme_dark()
 
 #ggplot(data = filter(police_vio_total, raceethnicity %in% c("White","Black","Hispanic/Latino"), classification %in% c("Gunshot"))) + 
 #  geom_bar(aes(x = raceethnicity, fill = raceethnicity), position = 'dodge') + facet_grid(armed ~ classification)
@@ -94,4 +94,12 @@ ggplot(data = filter(police_vio_total, raceethnicity %in% c("White","Black","His
 #  geom_bar(aes(x = reorder(raceethnicity,total, mean), y = total, fill = raceethnicity), stat = 'identity') 
 ggplot(data = summarise(group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black", "Hispanic/Latino"), gender == "Male"), raceethnicity, armed, classification, year), total = sum(n()) ) ) +
   geom_raster(aes(x = armed, y = classification, fill = total), interpolate = TRUE) + 
-  scale_fill_gradient(name = "Total Killed", low = 'yellow', high = 'red') + facet_grid(. ~ year)
+  scale_fill_gradient(name = "Total Killed", low = 'yellow', high = 'red') + facet_grid(. ~ year) + theme_dark() +
+  ggtitle('Total Killed in 2015 & 2016 Grouped by Weapon Use and Method of Death') +
+  xlab("Armed Weapon") + ylab('Method of death')
+
+ggplot(data = summarise(group_by(filter(police_vio_total, raceethnicity %in% c("White", "Black", "Hispanic/Latino"), gender == "Male"), raceethnicity, armed, classification, year), total = sum(n()) ) ) +
+  geom_raster(aes(x = armed, y = classification, fill = total), interpolate = TRUE) + 
+  scale_fill_gradient(name = "Total Killed", low = 'yellow', high = 'red') + facet_grid(raceethnicity ~ year) + theme_dark() +
+  ggtitle('Total Killed in 2015 & 2016 Grouped by Weapon Use and Method of Death') +
+  xlab("Armed Weapon") + ylab('Method of death')
