@@ -5,9 +5,7 @@ library(ggthemes)
 counties = map_data('county')
 states = map_data('state')
 
-armed_func = function() {
-  
-}
+
 police_vio_15 = read.csv('2015.csv')
 police_vio_16 = read.csv('2016.csv')
 state_abb = data.frame(full = state.name,state = state.abb)
